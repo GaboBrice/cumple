@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Una sorpresa para ti ✨</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@600;700;800&display=swap');
+
+:root {
+  --pink: #ff7fa8;
+  --rose: #ffb4c8;
+  --cream: #fff8f2;
+  --wine: #713c59;
+  --gold: #ffd98b;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  color: #fff;
+  background: radial-gradient(circle at 20% 10%, #673d70 0, #30244e 42%, #171b38 100%);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .35;
+  background-image: radial-gradient(#fff 1px, transparent 1px);
+  background-size: 48px 48px;
+  z-index: 0;
+}
+
+button { font: inherit; cursor: pointer; }
+
+/* --- PANTALLA INICIAL (PORTADA) --- */
+.hero-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 34px 20px;
+  background: radial-gradient(circle at 20% 10%, #673d70 0, #30244e 42%, #171b38 100%);
+  transition: transform 0.9s cubic-bezier(0.77, 0, 0.175, 1), opacity 0.8s ease;
+  text-align: center;
+}
+
+.hero-screen.slide-up {
+  transform: translateY(-100%);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.hero { max-width: 850px; width: 100%; }
+.eyebrow { letter-spacing: .25em; text-transform: uppercase; font-size: .72rem; color: #ffd8e4; font-weight: 700; }
+h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: clamp(2.7rem, 8vw, 5.6rem);
+  line-height: 1.02;
+  margin: 14px 0;
+  color: #fff4f7;
+  text-shadow: 0 5px 30px #ff8eb766;
+}
+.hero p { color: #f5dce7; font-size: 1.05rem; }
+
+/* Componente Torta Animada */
+.cake-wrap {
+  height: 250px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  margin: 10px auto 20px;
+  position: relative;
+}
+.cake {
+  position: relative;
+  width: 250px;
+  height: 175px;
+  filter: drop-shadow(0 20px 22px #0d102c88);
+  animation: float 3s ease-in-out infinite;
+}
+.plate {
+  position: absolute;
+  bottom: 0;
+  left: -25px;
+  width: 300px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(#fff4f0,#e8b7ca);
+  box-shadow: 0 7px 0 #bd7f9d;
+}
+.layer {
+  position: absolute;
+  bottom: 18px;
+  left: 0;
+  width: 250px;
+  height: 95px;
+  border-radius: 18px 18px 25px 25px;
+  background: linear-gradient(90deg,#f9a8c4,#fff0e7 48%,#f48eaf);
+  box-shadow: inset 0 -12px #e77b9f;
+}
+.layer:before {
+  content: "";
+  position: absolute;
+  top: -12px;
+  left: 0;
+  width: 100%;
+  height: 30px;
+  border-radius: 50%;
+  background: #fff2e9;
+}
+.icing { position: absolute; top: 0; left: 0; width: 250px; height: 38px; border-radius: 50%; background: #fff7ed; z-index: 2; }
+.drip { position: absolute; top: 20px; width: 23px; height: 30px; background: #fff7ed; border-radius: 0 0 15px 15px; z-index: 2; }
+.drip:nth-child(1){left:35px;height:38px}.drip:nth-child(2){left:90px;height:26px}.drip:nth-child(3){left:155px;height:36px}.drip:nth-child(4){left:210px;height:25px}
+.candle {
+  position: absolute;
+  z-index: 4;
+  bottom: 126px;
+  left: 113px;
+  width: 24px;
+  height: 70px;
+  border-radius: 7px;
+  background: repeating-linear-gradient(135deg,#fff 0 8px,#ff83a8 8px 15px);
+  box-shadow: 0 0 0 2px #ffffff55;
+}
+
+/* Llama de la vela y humo */
+.flame {
+  position: absolute;
+  left: 3px;
+  top: -32px;
+  width: 18px;
+  height: 29px;
+  border-radius: 60% 40% 55% 45%;
+  background: radial-gradient(ellipse at 50% 65%,#fff8b0 0 18%,#ffc04e 42%,#ff7c45 75%);
+  transform: rotate(4deg);
+  filter: drop-shadow(0 0 12px #ffc34e);
+  animation: flicker .7s infinite alternate;
+  transition: opacity 0.5s ease;
+}
+
+.flame.off { opacity: 0; animation: none; }
+
+.smoke {
+  position: absolute;
+  left: 8px;
+  top: -25px;
+  width: 6px;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+}
+.smoke.active { animation: riseSmoke 1.5s ease-out forwards; }
+
+@keyframes riseSmoke {
+  0% { opacity: 0.8; transform: translateY(0) scale(1); }
+  100% { opacity: 0; transform: translateY(-35px) scale(3.5); }
+}
+
+@keyframes flicker { to { transform: rotate(-7deg) scale(.88); filter: drop-shadow(0 0 18px #ffd36c); } }
+@keyframes float { 50% { transform: translateY(-9px); } }
+
+.btn-primary {
+  border: 0;
+  border-radius: 999px;
+  padding: 15px 32px;
+  font-weight: 700;
+  font-size: 1.05rem;
+  background: linear-gradient(135deg, #ff9db9, #ffc3cf);
+  color: #542c48;
+  box-shadow: 0 8px 25px #100d2b44;
+  transition: .25s;
+  animation: pulse 2s infinite;
+}
+.btn-primary:hover { transform: translateY(-3px) scale(1.03); }
+@keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+
+/* --- CONTENIDO PRINCIPAL (FOTOS Y MENSAJES) --- */
+.main-content {
+  position: relative;
+  z-index: 1;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 1s ease 0.3s, transform 1s ease 0.3s;
+}
+
+.main-content.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Mensajes Chiquitos */
+.mini-messages {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  width: 100%;
+  margin-bottom: 35px;
+}
+
+.card {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 16px;
+  padding: 14px;
+  backdrop-filter: blur(10px);
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+.card .emoji { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+.card h3 { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: #fff4f7; margin-bottom: 2px; }
+.card p { color: #f2dce5; font-size: 0.8rem; line-height: 1.35; }
+
+/* Visor de Fotos Grandes */
+.photo-container {
+  width: 100%;
+  max-width: 700px;
+  text-align: center;
+  margin-bottom: 35px;
+}
+
+.photo-container h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(255, 142, 183, 0.4);
+}
+
+.photo-frame {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16/10;
+  border-radius: 24px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.08);
+  border: 2px solid rgba(255, 255, 255, 0.25);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.4);
+}
+
+.photo-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transform: scale(0.96);
+  transition: opacity 1s cubic-bezier(0.4, 0, 0.2, 1), transform 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.photo-slide.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.photo-slide img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.placeholder {
+  height: 100%;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 20px;
+  color: #542c48;
+  background: linear-gradient(135deg, #ffb6c9, #85628e);
+  font-weight: 700;
+  font-size: 1.2rem;
+}
+
+/* --- PANTALLA COMPLETA: PIDE TU DESEO (FONDO NOCHE) --- */
+.wish-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: radial-gradient(circle at 50% 30%, #1a1638 0%, #0a0817 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s;
+}
+
+.wish-screen.open {
+  opacity: 1;
+  visibility: visible;
+}
+
+.wish-screen h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.3rem;
+  color: #ffd98b;
+  margin-bottom: 10px;
+  text-shadow: 0 0 15px rgba(255, 217, 139, 0.4);
+}
+
+.wish-text {
+  font-size: 1.15rem;
+  color: #f5dce7;
+  max-width: 500px;
+  min-height: 50px;
+  transition: opacity 0.5s ease;
+}
+
+/* Confeti & Globos Animados */
+.confetti {
+  position: fixed;
+  top: -15px;
+  width: 9px;
+  height: 14px;
+  z-index: 250;
+  pointer-events: none;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+}
+
+.balloon {
+  position: fixed;
+  bottom: -100px;
+  width: 35px;
+  height: 45px;
+  border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.75;
+  animation: floatUp linear forwards;
+}
+
+@keyframes floatUp {
+  to { transform: translateY(-120vh); }
+}
+</style>
+</head>
+<body>
+
+<!-- PANTALLA INICIAL (PORTADA) -->
+<div class="hero-screen" id="heroScreen">
+  <div class="hero">
+    <div class="eyebrow">Hoy es un día para celebrar ✨</div>
+    <h1>¡Feliz cumpleaños!</h1>
+    <p>Preparamos una pequeña sorpresa especialmente para ti.</p>
+    
+    <div class="cake-wrap">
+      <div class="cake">
+        <div class="plate"></div>
+        <div class="layer">
+          <div class="icing"></div>
+          <i class="drip"></i><i class="drip"></i><i class="drip"></i><i class="drip"></i>
+        </div>
+        <div class="candle">
+          <div class="flame"></div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="actions">
+      <button class="btn-primary" onclick="startExperience()">Descubrir mi sorpresa 💗</button>
+    </div>
+  </div>
+</div>
+
+<!-- AUDIO (Recuerda tener assets.mp3 en la misma carpeta) -->
+<audio id="birthdayAudio" src="assets.mp3" preload="auto" loop></audio>
+
+<!-- CONTENIDO INTERACTIVO PRINCIPAL -->
+<main class="main-content" id="mainContent">
+
+  <!-- Mensajes compactos -->
+  <div class="mini-messages">
+    <article class="card">
+      <span class="emoji">🎂</span>
+      <h3>Un año más</h3>
+      <p>Una nueva vuelta al sol llena de momentos bonitos.</p>
+    </article>
+    <article class="card">
+      <span class="emoji">🌟</span>
+      <h3>Brilla siempre</h3>
+      <p>Que nunca te falten razones para perseguir tu felicidad.</p>
+    </article>
+    <article class="card">
+      <span class="emoji">💖</span>
+      <h3>Con cariño</h3>
+      <p>Esta pequeña sorpresa es para recordarte lo especial que eres.</p>
+    </article>
+  </div>
+
+  <!-- Visor de Fotos Grandes -->
+  <div class="photo-container">
+    <h2>Un pequeño recordatorio ✨</h2>
+    <div class="photo-frame">
+      
+      <div class="photo-slide active">
+        <img src="foto1.jpg" alt="Foto 1" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+        <div class="placeholder" style="display:none;"><div>📷 Agrega <b>foto1.jpg</b></div></div>
+      </div>
+
+      <div class="photo-slide">
+        <img src="foto2.jpg" alt="Foto 2" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+        <div class="placeholder" style="display:none;"><div>💞 Agrega <b>foto2.jpg</b></div></div>
+      </div>
+
+      <div class="photo-slide">
+        <img src="foto3.jpg" alt="Foto 3" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+        <div class="placeholder" style="display:none;"><div>🌸 Agrega <b>foto3.jpg</b></div></div>
+      </div>
+
+      <div class="photo-slide">
+        <img src="foto4.jpg" alt="Foto 4" onerror="this.style.display='none'; this.nextElementSibling.style.display='grid';">
+        <div class="placeholder" style="display:none;"><div>🥰 Agrega <b>foto4.jpg</b></div></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Botón para ir a la pantalla del deseo -->
+  <button class="btn-primary" onclick="openWishScreen()">Pide tu deseo ✨</button>
+
+</main>
+
+<!-- PANTALLA COMPLETA DEL DESEO (FONDO NOCHE) -->
+<div class="wish-screen" id="wishScreen">
+  <h2>Pide un deseo 🌠</h2>
+  
+  <div class="cake-wrap">
+    <div class="cake">
+      <div class="plate"></div>
+      <div class="layer">
+        <div class="icing"></div>
+        <i class="drip"></i><i class="drip"></i><i class="drip"></i><i class="drip"></i>
+      </div>
+      <div class="candle">
+        <div class="flame" id="wishFlame"></div>
+        <div class="smoke" id="wishSmoke"></div>
+      </div>
+    </div>
+  </div>
+
+  <p class="wish-text" id="wishText">Cierra los ojos y piensa en tu deseo...</p>
+</div>
+
+<script>
+let currentSlide = 0;
+const slides = document.querySelectorAll('.photo-slide');
+
+function startExperience() {
+  // 1. Ocultar portada
+  document.getElementById('heroScreen').classList.add('slide-up');
+  document.getElementById('mainContent').classList.add('active');
+
+  // 2. Reproducir Audio (assets.mp3)
+  const audio = document.getElementById('birthdayAudio');
+  audio.play().catch(e => console.log("Audio iniciado"));
+
+  // 3. Efectos de Confeti y Globos
+  launchConfetti(70);
+  spawnBalloons(12);
+
+  // 4. Cambiar fotos automáticamente cada 3.5 segundos
+  setInterval(() => {
+    slides[currentSlide].classList.remove('active');
+    currentSlide = (currentSlide + 1) % slides.length;
+    slides[currentSlide].classList.add('active');
+  }, 3500);
+}
+
+// Lógica de la pantalla de deseo completa
+function openWishScreen() {
+  const wishScreen = document.getElementById('wishScreen');
+  const flame = document.getElementById('wishFlame');
+  const smoke = document.getElementById('wishSmoke');
+  const text = document.getElementById('wishText');
+
+  // Abrir pantalla nocturna con la vela prendida
+  flame.classList.remove('off');
+  smoke.classList.remove('active');
+  text.textContent = "Cierra los ojos y piensa en tu deseo... 🕯️";
+  wishScreen.classList.add('open');
+
+  // 1. Después de 15 segundos la vela se apaga
+  setTimeout(() => {
+    flame.classList.add('off');
+    smoke.classList.add('active');
+    text.textContent = "¡Deseo pedido! Que se cumpla muy pronto 💫✨";
+    launchConfetti(60);
+
+    // 2. Se mantiene así 10 segundos (Total: 25s) y vuelve a las fotos automáticamente
+    setTimeout(() => {
+      wishScreen.classList.remove('open');
+    }, 10000);
+
+  }, 15000);
+}
+
+// Generador de Confeti
+function launchConfetti(n = 50) {
+  const colors = ['#ff9db9', '#ffd98b', '#fff1f5', '#b6a0ff', '#9de6d5'];
+  for (let i = 0; i < n; i++) {
+    let e = document.createElement('i');
+    e.className = 'confetti';
+    e.style.left = Math.random() * 100 + 'vw';
+    e.style.background = colors[Math.floor(Math.random() * colors.length)];
+    e.style.animationDuration = (2.5 + Math.random() * 3) + 's';
+    e.style.animationDelay = Math.random() * 0.8 + 's';
+    document.body.appendChild(e);
+    setTimeout(() => e.remove(), 6000);
+  }
+}
+
+// Generador de Globos
+function spawnBalloons(n = 10) {
+  const colors = ['#ff83a8', '#ffc04e', '#b6a0ff', '#ff9db9'];
+  for (let i = 0; i < n; i++) {
+    let b = document.createElement('div');
+    b.className = 'balloon';
+    b.style.left = (Math.random() * 90 + 5) + 'vw';
+    b.style.background = colors[Math.floor(Math.random() * colors.length)];
+    b.style.animationDuration = (6 + Math.random() * 4) + 's';
+    b.style.animationDelay = (Math.random() * 2) + 's';
+    document.body.appendChild(b);
+    setTimeout(() => b.remove(), 10000);
+  }
+}
+</script>
+</body>
+</html>
